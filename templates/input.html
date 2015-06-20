@@ -1,9 +1,27 @@
-<html>
-	<head><title>ROAE Playlistr</title></head>
-	<body>
-		<form action="" method="POST" >
-			<textarea name="input" rows="40" cols="80" ></textarea>
-			<input type="submit" value="Lookup">
-		</form>
-	</body>
-</html>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% import "bootstrap/utils.html" as util %}
+
+{% block title %}ROAE Playlistr{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+  <!-- ... -->
+</div>
+{% endblock %}
+
+{% block content %}
+  	<div class="container">
+  	<div class="row">
+		<div class="col-md-8">
+  	{{ wtf.quick_form(form, action='/getinfo') }}
+		</div>
+  	</div>
+  	</div>
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link href="{{bootstrap_find_resource('css/bootstrap-theme.css', cdn='bootstrap')}}" rel="stylesheet" media="screen">
+{% endblock %}
