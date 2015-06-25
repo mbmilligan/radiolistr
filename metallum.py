@@ -17,11 +17,11 @@ def albumsearch(artist, release):
 
 def getalbumdata(artist, release):
 	addr = albumsearch(artist, release)
-	ret = {'artist': artist, 'release': release}
+	ret = {'artist': artist, 'album': release}
 	if addr: ret['url'] = addr
 	try:
 		tree = html.fromstring( requests.get(addr).text )
-		ret['release'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
+		ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
 		ret['artist'] = tree.xpath('//h2[@class="band_name"]//text()')[0]
 		ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]
 	except:

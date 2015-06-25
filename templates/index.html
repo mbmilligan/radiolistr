@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+  	<div class="container" role="main">
+  	<div class="jumbotron">
+		<h1>Complete the playlist</h1>
+		<p>Upload the night's track spreadsheet to begin</p>
+  	</div>
+  	
+  	<div class="page-header">
+		<h1>Upload form</h1></div>
+	<form method="POST" action="{{ url_for('readtabfile') }}" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="showfile">Upload file</label>
+			<input id="showfile" name="showfile" type="file">
+		</div>
+		<div class="form-group">
+			<label for="showdate">Date of Show</label>
+			<input type="date" id="showdate" name="showdate" 
+				data-provide="datepicker" 
+				data-date-format="yyyy-mm-dd" data-date-autoclose="true"
+				class="datepicker">
+		</div>
+		<input type="submit">
+	</form>
+  	
+  	</div>
+{% endblock %}

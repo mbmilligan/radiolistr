@@ -4,7 +4,9 @@ roaelistr : Make playlists for ROAE on KFAI
 Dependencies
 ------------
 
-flask, flask-bootstrap, Flask-WTF
+flask, flask-bootstrap, Flask-WTF, Flask-Uploads*
+
+* consider dropping WTF, Uploads, they don't add much to what we're doing here
 
 requests
 

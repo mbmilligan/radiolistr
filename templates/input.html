@@ -1,15 +1,4 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% import "bootstrap/fixes.html" as fixes %}
-{% import "bootstrap/utils.html" as util %}
-
-{% block title %}ROAE Playlistr{% endblock %}
-
-{% block navbar %}
-<div class="navbar navbar-fixed-top">
-  <!-- ... -->
-</div>
-{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
   	<div class="container">
@@ -21,7 +10,3 @@
   	</div>
 {% endblock %}
 
-{% block styles %}
-{{super()}}
-<link href="{{bootstrap_find_resource('css/bootstrap-theme.css', cdn='bootstrap')}}" rel="stylesheet" media="screen">
-{% endblock %}
