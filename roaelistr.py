@@ -11,6 +11,7 @@ import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'roae'
+app.config['MAX_CONTENT_LENGTH'] = 200 * 1024
 Bootstrap(app)
 
 @app.route('/')
@@ -21,7 +22,7 @@ def starter():
 @app.route('/getinfo', methods=['GET','POST'])
 # AJAX route accepts playlist data, does lookups and streams back label data
 def gettrackinfo():
-	tracks = json.loads(request.form['listdata'])
+	tracks = json.loads(request.args['listdata'])
 	out = []
 	for l in tracks:
 		try:
