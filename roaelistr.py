@@ -26,10 +26,13 @@ def gettrackinfo():
 	out = []
 	for l in tracks:
 		try:
-			out.append(metallum.getalbumdata(l['artist'], l['album']))
+			if l['artist'] and l['album']:
+				out.append(metallum.getalbumdata(l['artist'], l['album']))
+			else:
+				out.append(dict(result='ERROR'))
 		except:
-			out.append('ERROR')
-	return json.dumps(out)
+			out.append(dict(result='ERROR'))
+	return json.dumps(out, ensure_ascii=False)
 
 @app.route('/readtable', methods=['POST'])
 # route for uploading a csv/xls file (whatever Pandas can handle),
@@ -43,6 +46,10 @@ def readtabfile():
 # return Pandas-generated xls file for upload as playlist
 def getxls():
 	return ""
+
+@app.route('/e')
+def echor():
+	return "Got: " + request.args.get('e','')
 
 if __name__ == '__main__':
     app.run(debug=True)
