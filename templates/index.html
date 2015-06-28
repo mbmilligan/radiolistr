@@ -51,9 +51,14 @@
 				      <tbody></tbody>
 			</table>
 			</div>
-			<textarea id="resTxt" style="display: none"></textarea>
 		</div>
 		</div>
+  	</div>
+  	<div id="gFForm" style="display: none">
+		<form action="/getxls" method="POST">
+			<textarea id="getFile-listdata" name="listdata"></textarea>
+			<input type="date" id="getFile-date" name="date">
+		</form>
   	</div>
 {% endblock %}
 

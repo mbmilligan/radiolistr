@@ -7,8 +7,10 @@ $(document).ready(function() {
 		success: function(r) {
 			$('#resTxt').text(JSON.stringify(r,null,2))
 			$('table#playlist-table').bootstrapTable('load', r);
-			$('#sendFile').removeClass('btn-primary').addClass('btn-success')
-			$('#getLabels').removeClass('btn-default').addClass('btn-primary')
+			$('#sendFile').removeClass('btn-primary').addClass('btn-success');
+			$('#getLabels').removeClass('btn-default btn-success').addClass('btn-primary');
+			$('#getSMText').removeClass('btn-primary').addClass('btn-default');
+			$('#getFile').removeClass('btn-primary').addClass('btn-default');
 		}
 	});
 
@@ -17,7 +19,7 @@ $(document).ready(function() {
 		var data = bt.bootstrapTable('getData');
 		var doLoop = function (i, list, defer) {
 			if (!defer) { defer = $.Deferred(); }
-			while (i in list && !('artist' in list[0] && 'album' in list[0])) {
+			while (i in list && !(list[i].artist && list[i].album)) {
 				i += 1;
 			}
 			if (i in list) {
@@ -35,13 +37,30 @@ $(document).ready(function() {
 			else { defer.resolve(); }
 			return defer;
 		};
-		$('#getLabels').removeClass('btn-default').removeClass('btn-primary')
-			.addClass('btn-danger');
+		$('#getLabels').removeClass('btn-default btn-primary btn-success').addClass('btn-danger');
 		doLoop(0, data).done(function() {
 			$('#getLabels').removeClass('btn-danger').addClass('btn-success');
 			$('#getSMText').removeClass('btn-default').addClass('btn-primary');
 			$('#getFile').removeClass('btn-default').addClass('btn-primary');
 		});
 	});
-			
+
+	$('#getSMText').click(function () {
+		d = $('#playlist-table').bootstrapTable('getData');
+		alert(d.map(function(i) { return i.artist + ' - "' + i.title + '" - ' + i.album }).join('\n'));
+	});
+	
+	$('#getFile').click(function () {
+		var q = { date: $('#showdate').val(),
+				  listdata: JSON.stringify( $('#playlist-table').bootstrapTable('getData') )
+			  };
+		$('#getFile-listdata').val(q.listdata);
+		$('#getFile-date').val(q.date);
+		return $('#gFForm form').submit();
+		$('#gFForm form').ajaxSubmit({
+			iframe: true,
+			dataType: null,
+			success: null
+		});
+	});
 });

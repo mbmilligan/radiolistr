@@ -8,6 +8,7 @@ import re
 def albumsearch(artist, release):
 	page = requests.get('http://www.metal-archives.com/search/ajax-advanced/searching/albums/', 
 						params={ 'bandName': artist, 'releaseTitle': release })
+	page.encoding = 'utf-8'
 	data = json.loads(page.text)
 	try:
 		addr = html.fromstring( data['aaData'][0][1] ).xpath('a')[0].values()[0]
@@ -20,7 +21,9 @@ def getalbumdata(artist, release):
 	ret = {'artist': artist, 'album': release}
 	if addr: ret['url'] = addr
 	try:
-		tree = html.fromstring( requests.get(addr).text )
+		page = requests.get(addr)
+		page.encoding = 'utf-8'
+		tree = html.fromstring( page.text )
 		ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
 		ret['artist'] = tree.xpath('//h2[@class="band_name"]//text()')[0]
 		ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]

@@ -35,9 +35,14 @@ def make_xls(df, path):
 		if c not in ldf:
 			ldf[c] = ''
 	outdf = ldf[cols]
-	outdf.to_excel(path, columns=cols,
-		header=map(lambda s: s.title(), ldf.columns),
-		index=False, encoding='utf8')
+	ew = pd.ExcelWriter(path, engine='xlwt')
+	outdf.to_excel(ew, columns=cols, sheet_name="Tracks",
+		header=map(lambda s: s.title(), outdf.columns),
+		index=False, encoding='utf8', float_format='%.2f')
+	for c, w in [(0, 20), (1, 50), (2, 40), (3, 20), (4, 10)]:
+		ew.sheets["Tracks"].col(c).width = 260*w
+	ew.save()
+	ew.close()
 	return path
 
 def json2df(data):
@@ -51,13 +56,19 @@ def table2json(f, path):
 
 def fixtimefn(time):
 	if isinstance(time, float):
-		return time
+		retv = time
 	else:
 		m, s = time.split(':')
-		return float(m) + float(s)/100.0
+		retv = float(m) + float(s)/100.0
+	if int(retv) == retv:
+		retv += 0.01
+	return retv
 
 def fixtime(df, col):
 	df[col] = df[col].map(fixtimefn)
 
-#outtf = NamedTemporaryFile(mode='w+b', suffix='xls', delete=False)
+def json2xls(data, path):
+	df = json2df(data)
+	fixtime(df, 'time')
+	make_xls(df, path)
 

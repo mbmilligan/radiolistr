@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file
+from werkzeug import secure_filename
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField
@@ -8,6 +9,8 @@ from wtforms.widgets.html5 import DateInput
 import metallum
 import roaetables
 import json
+import tempfile
+import cStringIO
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'roae'
@@ -45,7 +48,16 @@ def readtabfile():
 # accept gettrackinfo data (possibly edited client-side)
 # return Pandas-generated xls file for upload as playlist
 def getxls():
-	return ""
+	if 'listdata' not in request.args.keys() and 'listdata' in request.form.keys():
+		request.args = request.form
+	data = request.args['listdata']
+	with tempfile.NamedTemporaryFile(mode='w+b', suffix='.xls', delete=True) as outf:
+		roaetables.json2xls(data, outf.name)
+		rdata = cStringIO.StringIO(outf.read())
+		rdata.seek(0)
+		return send_file(rdata, as_attachment=True, 
+						attachment_filename=secure_filename("playlist-%s.xls" % (request.args['date'],))
+						)
 
 @app.route('/e')
 def echor():
