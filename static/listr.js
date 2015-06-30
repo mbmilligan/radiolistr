@@ -23,7 +23,7 @@ $(document).ready(function() {
 				i += 1;
 			}
 			if (i in list) {
-				$.getJSON('/getinfo', { listdata: JSON.stringify([list[i]]) })
+				$.getJSON(document.location.pathname + 'getinfo', { listdata: JSON.stringify([list[i]]) })
 					.done(function(res) {
 						if('label' in res[0]) {
 							list[i].label = res[0].label;

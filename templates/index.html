@@ -55,7 +55,7 @@
 		</div>
   	</div>
   	<div id="gFForm" style="display: none">
-		<form action="/getxls" method="POST">
+		<form action="{{ url_for('getxls') }}" method="POST">
 			<textarea id="getFile-listdata" name="listdata"></textarea>
 			<input type="date" id="getFile-date" name="date">
 		</form>
