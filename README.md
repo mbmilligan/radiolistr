@@ -6,13 +6,14 @@ Dependencies
 
 flask, flask-bootstrap, Flask-WTF*
 
-* consider dropping WTF, doesn't add much to what we're doing here
+(* I think WTF is not actually being used)
 
 requests
 
 lxml
 
-pandas
+pandas (>= 0.14)
+- xlrd / xlwt >0.7 (these packages are pandas deps already, but older ones won't work)
 
 In principle, all of these can be installed via pip.
 

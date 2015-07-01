@@ -5,7 +5,7 @@ from os import remove
 
 def read_xls_or_csv(f, name):
 	if name.lower().endswith('.xls'):
-		d = pd.read_excel(f)
+		d = pd.read_excel(f, sheetname=0)
 	elif name.lower().endswith('.csv'):
 		d = pd.read_csv(f)
 	else:
