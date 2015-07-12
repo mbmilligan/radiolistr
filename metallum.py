@@ -25,7 +25,7 @@ def getalbumdata(artist, release):
 		page.encoding = 'utf-8'
 		tree = html.fromstring( page.text )
 		ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
-		ret['artist'] = tree.xpath('//h2[@class="band_name"]//text()')[0]
+		ret['artist'] = tree.xpath('//h2[@class="band_name"]/a//text()')[0]
 		ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]
 	except:
 		pass
