@@ -56,9 +56,9 @@ def gettrackdata(artist, release, track=None):
 	if not track or len(data['tracks']) < 1:
 		return data
 	match, score = fwproc.extractOne(track, data['tracks'],
-				  processor=lambda e: fwutils.full_process(e[0]),
-				  scorer=fuzz.UQRatio)
-	if score >= 75:
+				  processor=lambda e: unicode(e[0],DATAENC),
+				  scorer=fuzz.UWRatio)
+	if score >= 88:
 		data['tracks'] = [ match ]
 	return data
 
