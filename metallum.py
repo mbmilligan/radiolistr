@@ -5,10 +5,15 @@ import sys
 import time
 import re
 
+DATAENC = 'utf-8'
+
+def justtext(element):
+	return html.tostring(element, method='text', encoding=DATAENC).strip()
+
 def albumsearch(artist, release):
 	page = requests.get('http://www.metal-archives.com/search/ajax-advanced/searching/albums/', 
 						params={ 'bandName': artist, 'releaseTitle': release })
-	page.encoding = 'utf-8'
+	page.encoding = DATAENC
 	data = json.loads(page.text)
 	try:
 		addr = html.fromstring( data['aaData'][0][1] ).xpath('a')[0].values()[0]
@@ -16,17 +21,31 @@ def albumsearch(artist, release):
 		addr = None
 	return addr
 
+def extractalbumdata(pagetext):
+	tree = html.fromstring( pagetext )
+	ret = {}
+	ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
+	ret['artist'] = tree.xpath('//h2[@class="band_name"]/a//text()')[0]
+	ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]
+	tracklist = []
+	tracks = tree.xpath('//table[contains(@class,"table_lyrics")]')[0]
+	for row in tracks.xpath('*/tr[@class="even" or @class="odd"]'):
+		tds = row.findall('td')
+		for i, td in enumerate(tds):
+			if td.attrib.get('class') == 'wrapWords':
+				tracklist.append([ justtext(td), justtext(tds[i+1]) ])
+				break
+	ret['tracks'] = tracklist
+	return ret
+
 def getalbumdata(artist, release):
 	addr = albumsearch(artist, release)
 	ret = {'artist': artist, 'album': release}
 	if addr: ret['url'] = addr
 	try:
 		page = requests.get(addr)
-		page.encoding = 'utf-8'
-		tree = html.fromstring( page.text )
-		ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
-		ret['artist'] = tree.xpath('//h2[@class="band_name"]/a//text()')[0]
-		ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]
+		page.encoding = DATAENC
+		ret.update(extractalbumdata(page.text))
 	except:
 		pass
 	return ret
