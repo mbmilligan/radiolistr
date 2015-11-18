@@ -4,6 +4,7 @@ from lxml import html
 import sys
 import time
 import re
+from fuzzywuzzy import fuzz as fuzz, utils as fwutils, process as fwproc
 
 DATAENC = 'utf-8'
 
@@ -24,9 +25,9 @@ def albumsearch(artist, release):
 def extractalbumdata(pagetext):
 	tree = html.fromstring( pagetext )
 	ret = {}
-	ret['album'] = tree.xpath('//h1[@class="album_name"]//text()')[0]
-	ret['artist'] = tree.xpath('//h2[@class="band_name"]/a//text()')[0]
-	ret['label'] = tree.xpath('//dl[@class="float_right"]/dt[text()="Label:"]/following::dd[1]//text()')[0]
+	ret['album'] = justtext(tree.xpath('//h1[@class="album_name"]')[0])
+	ret['artist'] = justtext(tree.xpath('//h2[@class="band_name"]')[0])
+	ret['label'] = justtext(tree.xpath('//dl/dt[text()="Label:"]/following::dd[1]')[0])
 	tracklist = []
 	tracks = tree.xpath('//table[contains(@class,"table_lyrics")]')[0]
 	for row in tracks.xpath('*/tr[@class="even" or @class="odd"]'):
