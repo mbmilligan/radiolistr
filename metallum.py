@@ -51,6 +51,16 @@ def getalbumdata(artist, release):
 		pass
 	return ret
 
+def gettrackdata(artist, release, track=None):
+	data = getalbumdata(artist, release)
+	if not track or len(data['tracks']) < 1:
+		return data
+	match, score = fwproc.extractOne(track, data['tracks'],
+				  processor=lambda e: fwutils.full_process(e[0]))
+	if score >= 85:
+		data['tracks'] = [ match ]
+	return data
+
 def printlabels():
 	for line in sys.stdin.readlines():
 		a, t, r = line.split('\t')

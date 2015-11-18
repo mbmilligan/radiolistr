@@ -10,6 +10,8 @@ flask, flask-bootstrap, Flask-WTF*
 
 requests
 
+fuzzywuzzy
+
 lxml
 
 pandas (>= 0.14)
@@ -18,13 +20,14 @@ pandas (>= 0.14)
 In principle, all of these can be installed via pip.
 
 In practice, it is likely much easier to use the system packaged lxml and pandas,
-rather than bother with compliling those libraries their dependencies.
+rather than bother with compliling those libraries their dependencies. Note that
+yes, we do use features of lxml not found in the standard library xml.etree module.
 
 Therefore, in this environment, what we have done is:
 
 	apt-get install python-lxml python-pandas
 	virtualenv --system-site-packages python
-	(python) pip install flask flask-bootstrap Flask-WTF requests
+	(python) pip install flask flask-bootstrap Flask-WTF requests fuzzywuzzy
 
 In addition, note that we are using a number of front-end components that are pulled from CDNs:
 
