@@ -30,7 +30,10 @@ def gettrackinfo():
 	for l in tracks:
 		try:
 			if l['artist'] and l['album']:
-				out.append(metallum.getalbumdata(l['artist'], l['album']))
+				data = metallum.gettrackdata(l['artist'], l['album'], l.get('title'))
+				if len(data['tracks'] == 1):
+					data['title'], data['time'] = data['tracks'][0]
+				out.append(data)
 			else:
 				out.append(dict(result='ERROR'))
 		except:
