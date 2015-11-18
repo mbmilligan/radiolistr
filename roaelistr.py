@@ -31,7 +31,7 @@ def gettrackinfo():
 		try:
 			if l['artist'] and l['album']:
 				data = metallum.gettrackdata(l['artist'], l['album'], l.get('title'))
-				if len(data['tracks'] == 1):
+				if len(data['tracks']) == 1:
 					data['title'], data['time'] = data['tracks'][0]
 				out.append(data)
 			else:

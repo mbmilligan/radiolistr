@@ -26,9 +26,7 @@ $(document).ready(function() {
 				$.getJSON(document.location.pathname + 'getinfo', { listdata: JSON.stringify([list[i]]) })
 					.done(function(res) {
 						if('label' in res[0]) {
-							list[i].label = res[0].label;
-							list[i].artist = res[0].artist;
-							list[i].album = res[0].album;
+							$.extend(list[i], res[0]);
 							bt.bootstrapTable('load', list);
 						};
 					})
