@@ -55,17 +55,20 @@ def table2json(f, path):
 	return df2json(find_columns(read_xls_or_csv(f, path)))
 
 def fixtimefn(time):
-	if isinstance(time, float):
-		retv = time
-	else:
+	try:
 		m, s = time.split(':')
 		retv = float(m) + float(s)/100.0
-	if int(retv) == retv:
-		retv += 0.01
+	except:
+		retv = time
+	try:
+		if int(retv) == retv:
+			retv += 0.01
+	except:
+		pass
 	return retv
 
 def fixtime(df, col):
-	df[col] = df[col].map(fixtimefn)
+	df[col] = df[col].map(fixtimefn, na_action='ignore')
 
 def json2xls(data, path):
 	df = json2df(data)
