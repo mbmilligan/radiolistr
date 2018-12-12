@@ -41,6 +41,14 @@ def make_xls(df, path):
 		index=False, encoding='utf8', float_format='%.2f')
 	for c, w in [(0, 20), (1, 50), (2, 40), (3, 20), (4, 10)]:
 		ew.sheets["Tracks"].col(c).width = 260*w
+        import traceback
+        try:
+            import xlwt
+            style = xlwt.XFStyle()
+            style.num_format_str = '0.00'
+            ew.sheets["Tracks"].col(4).set_style(style)
+        except:
+            traceback.print_exc()
 	ew.save()
 	ew.close()
 	return path
