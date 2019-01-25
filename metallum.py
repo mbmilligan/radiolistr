@@ -7,12 +7,20 @@ import re
 from fuzzywuzzy import fuzz as fuzz, utils as fwutils, process as fwproc
 
 DATAENC = 'utf-8'
+USER_AGENT = "radiolistr/2019 +github.com/mbmilligan/radiolistr"
+
+def init_session(user_agent=USER_AGENT):
+	s = requests.Session()
+	s.headers.update({'User-Agent': user_agent})
+	return s
 
 def justtext(element):
 	return html.tostring(element, method='text', encoding=DATAENC).strip()
 
-def albumsearch(artist, release):
-	page = requests.get('http://www.metal-archives.com/search/ajax-advanced/searching/albums/', 
+def albumsearch(artist, release, session=None):
+	if not session:
+		session = init_session()
+	page = session.get('http://www.metal-archives.com/search/ajax-advanced/searching/albums/', 
 						params={ 'bandName': artist, 'releaseTitle': release })
 	page.encoding = DATAENC
 	data = json.loads(page.text)
@@ -39,12 +47,14 @@ def extractalbumdata(pagetext):
 	ret['tracks'] = tracklist
 	return ret
 
-def getalbumdata(artist, release):
+def getalbumdata(artist, release, session=None):
+	if not session:
+		session = init_session()
 	addr = albumsearch(artist, release)
 	ret = {'artist': artist, 'album': release}
 	if addr: ret['url'] = addr
 	try:
-		page = requests.get(addr)
+		page = session.get(addr)
 		page.encoding = DATAENC
 		ret.update(extractalbumdata(page.text))
 	except:
@@ -66,17 +76,17 @@ def printlabels():
 	for line in sys.stdin.readlines():
 		a, t, r = line.split('\t')
 		label = getalbumdata(a, r).get('label', 'NOT FOUND')
-		print label 
+		print(label)
 		time.sleep(0.1)
 
 if __name__ == '__main__':
 	if len(sys.argv) > 1 and sys.argv[1].endswith('debug'):
 		for l in sys.stdin.readlines():
 			a, t, r = l.split('\t')
-			print getalbumdata(a, r)
+			print(getalbumdata(a, r))
 	printlabels()
 
-def bandsearch(params, activeOnly=False):
+def bandsearch(params, activeOnly=False, session=None):
 	"""Submit advanced search by bands
 	Valid parameters seem to be:
 	bandName=
@@ -91,9 +101,11 @@ def bandsearch(params, activeOnly=False):
 	bandLabelName=
 	indieLabel (=1 if desired)
 	"""
+	if not session:
+		session = init_session()
 	url = 'http://www.metal-archives.com/search/ajax-advanced/searching/bands/'
 	if activeOnly: params['status'] = 1
-	data = json.loads(requests.get(url, params=params).text)
+	data = json.loads(session.get(url, params=params).text)
 	data['bands'] = []
 	for be in data['aaData']:
 		a = html.fromstring(be[0]).find('a')
@@ -112,10 +124,12 @@ def id_from_url(url):
 		if re.match('^[0-9]+$', c):
 			return c
 
-def discog_by_id(idnum):
+def discog_by_id(idnum, session=None):
+	if not session:
+		session = init_session()
 	ids = str(idnum)
 	url = 'http://www.metal-archives.com/band/discography/id/%s/tab/all' % (ids,)
-	return requests.get(url).text
+	return session.get(url).text
 
 def discog_parse(table):
 	tab = html.fromstring(table).find('tbody')
