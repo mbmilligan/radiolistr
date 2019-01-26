@@ -15,7 +15,7 @@ def init_session(user_agent=USER_AGENT):
 	return s
 
 def justtext(element):
-	return html.tostring(element, method='text', encoding=DATAENC).strip()
+	return html.tostring(element, method='text', encoding='unicode').strip()
 
 def albumsearch(artist, release, session=None):
 	if not session:
@@ -36,6 +36,7 @@ def extractalbumdata(pagetext):
 	ret['album'] = justtext(tree.xpath('//h1[@class="album_name"]')[0])
 	ret['artist'] = justtext(tree.xpath('//h2[@class="band_name"]')[0])
 	ret['label'] = justtext(tree.xpath('//dl/dt[text()="Label:"]/following::dd[1]')[0])
+	ret['date'] = justtext(tree.xpath('//dl/dt[text()="Release date:"]/following::dd[1]')[0])
 	tracklist = []
 	tracks = tree.xpath('//table[contains(@class,"table_lyrics")]')[0]
 	for row in tracks.xpath('*/tr[@class="even" or @class="odd"]'):
@@ -156,3 +157,7 @@ def discog_latest_release(discs):
 	dl = sorted(discs, key=_discsortkey, reverse=True)
 	if len(dl) > 0: return dl[0]
 	else: return None
+
+def discog_significant_releases(discs):
+	return [ y for (x,y) in enumerate(discs) if x == 0 or
+		y['type'] in ('Full-length', 'EP') ]
