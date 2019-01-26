@@ -159,5 +159,37 @@ def discog_latest_release(discs):
 	else: return None
 
 def discog_significant_releases(discs):
+	"""Selects interesting releases from full table returned by discog_parse()
+
+	Example of finding album release dates in bulk:
+
+	with open('../iconic.csv','r',newline='') as f:
+	  with open('../iconic_dates.csv','a',newline='') as o:
+	    cr = csv.reader(f)
+	    co = csv.DictWriter(o, ['artist','album','date'], extrasaction='ignore')
+	    cr = [ y for (x,y) in enumerate(cr) if y[1].startswith('http') ]
+	    start = False
+	    for row in cr:
+	        artist, url = row[0:2]
+	        rels = met.discog_significant_releases(
+	          met.discog_parse(met.discog_by_id(met.id_from_url(url), session=s))
+	          )
+	        for r in rels:
+	            sleep(0.2)
+	            if r['url'].find('Edenbridge/Soli') > 0:
+	                start = True
+	            if not start:
+	                continue
+	            rel = met.extractalbumdata(s.get(r['url']).text)
+	            print(rel['artist'],rel['album'])
+	            co.writerow(rel)
+
+	Note that the dateparser module can be useful for reading long-form dates:
+
+		dt = dateparser.parse(date, settings={'PREFER_DAY_OF_MONTH': 'first'})
+		tt = dt.timetuple()
+		co.writerow([artist, album, date, tt.tm_year, tt.tm_yday])
+
+	"""
 	return [ y for (x,y) in enumerate(discs) if x == 0 or
 		y['type'] in ('Full-length', 'EP') ]
